@@ -182,6 +182,30 @@ export const ChatInterface = () => {
     return 'System'
   }
 
+  const getMessageTimestamp = (message: WebSocketMessage) => {
+    if (message.type === 'message' && message.data?.created_at) {
+      // PostgreSQLから来る時刻文字列をUTCとして明示的に扱う
+      const utcTimeString = message.data.created_at.endsWith('Z') 
+        ? message.data.created_at 
+        : message.data.created_at + 'Z'
+      
+      const utcDate = new Date(utcTimeString)
+      
+      return utcDate.toLocaleTimeString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    }
+    return new Date().toLocaleTimeString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
+  }
+
   return (
     <div className="flex h-screen bg-discord-darkest">
       {/* Server List */}
@@ -288,7 +312,7 @@ export const ChatInterface = () => {
                     {getMessageUsername(message)}
                   </span>
                   <span className="text-discord-secondary text-xs">
-                    {new Date().toLocaleTimeString()}
+                    {getMessageTimestamp(message)}
                   </span>
                 </div>
                 <div className="text-discord-secondary">

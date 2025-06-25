@@ -36,9 +36,18 @@ export interface Message {
   user?: User
 }
 
+export interface WebSocketMessageData {
+  id?: number
+  content?: string
+  user?: { username: string }
+  user_id?: number
+  channel_id?: number
+  created_at?: string
+}
+
 export interface WebSocketMessage {
   type: 'message' | 'welcome' | 'user_joined' | 'user_left'
-  data?: any
+  data?: WebSocketMessageData
   message?: string
   user?: User
   channel_id?: number

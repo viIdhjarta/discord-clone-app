@@ -60,14 +60,21 @@ app.get('/api/messages', authMiddleware, async (c) => {
     }
     
     const result = await pool.query(`
-      SELECT m.id, m.content, m.user_id, m.channel_id, m.created_at, u.username 
+      SELECT m.id, m.content, m.user_id, m.channel_id, 
+             m.created_at AT TIME ZONE 'UTC' AS created_at, u.username 
       FROM messages m 
       JOIN users u ON m.user_id = u.id 
       WHERE m.channel_id = $1
       ORDER BY m.created_at ASC
     `, [channelId])
     
-    return c.json({ messages: result.rows })
+    // Convert timestamps to ISO string format
+    const messagesWithIsoTimestamps = result.rows.map(row => ({
+      ...row,
+      created_at: row.created_at.toISOString()
+    }))
+    
+    return c.json({ messages: messagesWithIsoTimestamps })
   } catch (error) {
     console.error('Error fetching messages:', error)
     return c.json({ error: 'Failed to fetch messages' }, 500)
@@ -108,7 +115,8 @@ app.post('/api/messages', authMiddleware, async (c) => {
     
     // Get message with username
     const messageResult = await pool.query(`
-      SELECT m.id, m.content, m.user_id, m.channel_id, m.created_at, u.username 
+      SELECT m.id, m.content, m.user_id, m.channel_id, 
+             m.created_at AT TIME ZONE 'UTC' AS created_at, u.username 
       FROM messages m 
       JOIN users u ON m.user_id = u.id 
       WHERE m.id = $1
@@ -125,7 +133,7 @@ app.post('/api/messages', authMiddleware, async (c) => {
         user: { username: newMessage.username },
         user_id: newMessage.user_id,
         channel_id: newMessage.channel_id,
-        created_at: newMessage.created_at
+        created_at: newMessage.created_at.toISOString()
       }
     }
     
