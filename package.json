@@ -1,0 +1,36 @@
+{
+  "name": "discord-clone",
+  "version": "1.0.0",
+  "description": "Discord clone built with React, TypeScript, Hono, and WebSocket",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "trap 'npm run docker:down' EXIT && npm run docker:up && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "discord",
+    "clone",
+    "react",
+    "typescript",
+    "hono",
+    "websocket"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ccusage": "^15.2.0"
+  }
+}
