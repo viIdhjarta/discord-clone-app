@@ -38,6 +38,7 @@ lerna-debug.log*
 .specstory/
 *.claude
 *.specstory
+CLAUDE.md
 
 # IDE generated files
 .vscode/
